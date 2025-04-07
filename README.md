@@ -1,106 +1,90 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-} from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "@/lib/firebase";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
 
-export default function Home() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function PublicarViaje() {
   const [user, setUser] = useState<any>(null);
+  const [origen, setOrigen] = useState("");
+  const [destino, setDestino] = useState("");
+  const [fecha, setFecha] = useState("");
+  const [plazas, setPlazas] = useState(1);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      if (!currentUser) {
+        router.push("/");
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
-  const handleSignUp = async () => {
+  const handlePublicar = async () => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert("¡Cuenta creada con éxito!");
-    } catch (error: any) {
-      alert("Error al crear cuenta: " + error.message);
+      await addDoc(collection(db, "viajes"), {
+        origen,
+        destino,
+        fecha: Timestamp.fromDate(new Date(fecha)),
+        plazas,
+        usuario: user.email,
+        creado: Timestamp.now(),
+      });
+      alert("¡Viaje publicado correctamente!");
+      setOrigen("");
+      setDestino("");
+      setFecha("");
+      setPlazas(1);
+    } catch (error) {
+      alert("Error al publicar el viaje");
     }
-  };
-
-  const handleLogin = async () => {
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert("¡Inicio de sesión exitoso!");
-    } catch (error: any) {
-      alert("Error al iniciar sesión: " + error.message);
-    }
-  };
-
-  const handleLogout = async () => {
-    await signOut(auth);
-    alert("Sesión cerrada");
   };
 
   return (
-    <motion.div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 p-4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8 space-y-6">
-        {!user ? (
-          <>
-            <h1 className="text-3xl font-bold text-center text-purple-700">
-              Bienvenido a WeAllGo
-            </h1>
-            <input
-              type="email"
-              placeholder="Correo electrónico"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Contraseña"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <div className="flex flex-col gap-3">
-              <button
-                className="bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition"
-                onClick={handleLogin}
-              >
-                Iniciar sesión
-              </button>
-              <button
-                className="bg-white border border-purple-600 text-purple-600 py-3 rounded-xl hover:bg-purple-50 transition"
-                onClick={handleSignUp}
-              >
-                Crear cuenta
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
-            <h2 className="text-2xl font-semibold text-center text-purple-600">
-              ¡Hola, {user.email}!
-            </h2>
-            <p className="text-center text-gray-500">Estás logueado con éxito.</p>
-            <button
-              className="bg-red-500 text-white py-3 w-full rounded-xl hover:bg-red-600 transition"
-              onClick={handleLogout}
-            >
-              Cerrar sesión
-            </button>
-          </>
-        )}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-blue-100 p-4">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-6 space-y-4">
+        <h1 className="text-2xl font-bold text-center text-green-700">Publicar un viaje</h1>
+
+        <input
+          type="text"
+          placeholder="Origen"
+          className="w-full px-4 py-2 border rounded-xl"
+          value={origen}
+          onChange={(e) => setOrigen(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Destino"
+          className="w-full px-4 py-2 border rounded-xl"
+          value={destino}
+          onChange={(e) => setDestino(e.target.value)}
+        />
+        <input
+          type="datetime-local"
+          className="w-full px-4 py-2 border rounded-xl"
+          value={fecha}
+          onChange={(e) => setFecha(e.target.value)}
+        />
+        <input
+          type="number"
+          min="1"
+          max="6"
+          className="w-full px-4 py-2 border rounded-xl"
+          value={plazas}
+          onChange={(e) => setPlazas(Number(e.target.value))}
+        />
+
+        <button
+          className="bg-green-600 text-white py-3 rounded-xl w-full hover:bg-green-700 transition"
+          onClick={handlePublicar}
+        >
+          Publicar viaje
+        </button>
       </div>
-    </motion.div>
+    </div>
   );
 }
