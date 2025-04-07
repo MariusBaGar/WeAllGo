@@ -2,17 +2,30 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase"; // Asegúrate de que esta ruta sea correcta
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignUp = () => {
-    alert("Función de crear cuenta aún no implementada 😅");
+  const handleSignUp = async () => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert("¡Cuenta creada con éxito! 🎉");
+    } catch (error: any) {
+      alert("Error al crear cuenta: " + error.message);
+    }
   };
 
-  const handleLogin = () => {
-    alert("Función de iniciar sesión aún no implementada 😅");
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert("¡Inicio de sesión exitoso! 🎉");
+      // Aquí podrías redirigir a otra página
+    } catch (error: any) {
+      alert("Error al iniciar sesión: " + error.message);
+    }
   };
 
   return (
@@ -41,7 +54,6 @@ export default function Home() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-
         <div className="flex flex-col gap-3">
           <button
             className="bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition"
