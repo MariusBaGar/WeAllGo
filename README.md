@@ -55,19 +55,20 @@ export default function Home() {
               Bienvenido a WeAllGo
             </h1>
             <input
-              type="email"
-              placeholder="Correo electrónico"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            placeholder="Correo electrónico"
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             />
             <input
-              type="password"
-              placeholder="Contraseña"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            placeholder="Contraseña"
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             />
+
             <div className="flex flex-col gap-3">
               <button
                 className="bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition"
