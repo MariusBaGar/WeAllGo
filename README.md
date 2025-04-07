@@ -36,6 +36,7 @@ export default function Home() {
       alert("Error al iniciar sesión: " + error.message);
     }
   };
+  
 
   const handleLogout = async () => {
     await auth.signOut();
@@ -57,17 +58,19 @@ export default function Home() {
             <input
             type="email"
             placeholder="Correo electrónico"
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black"
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black placeholder-opacity-100"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             />
+
             <input
             type="password"
             placeholder="Contraseña"
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black"
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black placeholder-opacity-100"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             />
+
 
             <div className="flex flex-col gap-3">
               <button
