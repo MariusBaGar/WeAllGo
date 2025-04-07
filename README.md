@@ -8,40 +8,49 @@ export default function Home() {
   const [password, setPassword] = useState("");
 
   const handleSignUp = () => {
-    console.log("Crear cuenta con:", email, password);
+    alert("Función de crear cuenta aún no implementada 😅");
   };
 
   const handleLogin = () => {
-    console.log("Iniciar sesión con:", email, password);
+    alert("Función de iniciar sesión aún no implementada 😅");
   };
 
   return (
-    <motion.div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-6 space-y-4">
-        <h1 className="text-2xl font-bold text-center">Bienvenido a WeAllGo</h1>
+    <motion.div
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 p-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8 space-y-6">
+        <h1 className="text-3xl font-bold text-center text-purple-700">
+          Bienvenido a WeAllGo
+        </h1>
+        <p className="text-center text-gray-500">Tu app para compartir trayectos de forma fácil.</p>
+
         <input
           type="email"
           placeholder="Correo electrónico"
-          className="w-full px-4 py-2 border rounded-xl"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-300"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder="Contraseña"
-          className="w-full px-4 py-2 border rounded-xl"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-300"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <div className="flex flex-col gap-2">
+
+        <div className="flex flex-col gap-3">
           <button
-            className="bg-black text-white py-2 rounded-xl hover:opacity-90"
+            className="bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition"
             onClick={handleLogin}
           >
             Iniciar sesión
           </button>
           <button
-            className="border py-2 rounded-xl hover:bg-gray-50"
+            className="bg-white border border-purple-600 text-purple-600 py-3 rounded-xl hover:bg-purple-50 transition"
             onClick={handleSignUp}
           >
             Crear cuenta
