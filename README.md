@@ -23,7 +23,7 @@ export default function Home() {
       if (currentUser) {
         if (!currentUser.emailVerified) {
           alert("Verifica tu correo electrónico antes de continuar.");
-          auth.signOut(); // cierra sesión si no ha verificado
+          auth.signOut();
         } else {
           setUser(currentUser);
         }
@@ -36,12 +36,10 @@ export default function Home() {
     try {
       const credenciales = await createUserWithEmailAndPassword(auth, email, password);
 
-      // Guarda en la colección de usuarios
       await addDoc(collection(db, "usuarios"), {
         email: email,
       });
 
-      // Enviar verificación de email
       await sendEmailVerification(credenciales.user);
 
       alert("¡Cuenta creada! Revisa tu correo y verifica tu cuenta.");
@@ -53,18 +51,27 @@ export default function Home() {
   const handleLogin = async () => {
     try {
       const credenciales = await signInWithEmailAndPassword(auth, email, password);
-
+  
       if (!credenciales.user.emailVerified) {
-        alert("Debes verificar tu correo antes de acceder.");
+        // Reenviar verificación si no está verificado
+        await sendEmailVerification(credenciales.user);
+        alert("Debes verificar tu correo. Te hemos reenviado el email de verificación.");
         auth.signOut();
         return;
       }
-
+  
       router.push("/publicar");
     } catch (error: any) {
-      alert("Error al iniciar sesión: " + error.message);
+      if (error.code === "auth/user-not-found") {
+        alert("No existe una cuenta con ese correo.");
+      } else if (error.code === "auth/wrong-password") {
+        alert("Contraseña incorrecta.");
+      } else {
+        alert("Error al iniciar sesión: " + error.message);
+      }
     }
   };
+  
 
   const handleLogout = async () => {
     await auth.signOut();
@@ -73,7 +80,7 @@ export default function Home() {
 
   return (
     <motion.div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 p-4"
+      className="flex items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 p-4 min-h-[calc(100vh-4rem)] pt-20"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
