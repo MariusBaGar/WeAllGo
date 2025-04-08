@@ -1,12 +1,15 @@
-
 "use client";
 
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  sendEmailVerification,
+} from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -17,19 +20,31 @@ export default function Home() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      if (currentUser) {
+        if (!currentUser.emailVerified) {
+          alert("Verifica tu correo electrónico antes de continuar.");
+          auth.signOut(); // cierra sesión si no ha verificado
+        } else {
+          setUser(currentUser);
+        }
+      }
     });
     return () => unsubscribe();
   }, []);
 
   const handleSignUp = async () => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const credenciales = await createUserWithEmailAndPassword(auth, email, password);
+
+      // Guarda en la colección de usuarios
       await addDoc(collection(db, "usuarios"), {
         email: email,
       });
-      
-      alert("¡Cuenta creada con éxito!");
+
+      // Enviar verificación de email
+      await sendEmailVerification(credenciales.user);
+
+      alert("¡Cuenta creada! Revisa tu correo y verifica tu cuenta.");
     } catch (error: any) {
       alert("Error al crear cuenta: " + error.message);
     }
@@ -37,17 +52,19 @@ export default function Home() {
 
   const handleLogin = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      await addDoc(collection(db, "usuarios"), {
-        email: email,
-      });
-      
+      const credenciales = await signInWithEmailAndPassword(auth, email, password);
+
+      if (!credenciales.user.emailVerified) {
+        alert("Debes verificar tu correo antes de acceder.");
+        auth.signOut();
+        return;
+      }
+
       router.push("/publicar");
     } catch (error: any) {
       alert("Error al iniciar sesión: " + error.message);
     }
   };
-  
 
   const handleLogout = async () => {
     await auth.signOut();
@@ -66,21 +83,22 @@ export default function Home() {
             <h1 className="text-3xl font-bold text-center text-purple-700">
               Bienvenido a WeAllGo
             </h1>
-            <input
-            type="email"
-            placeholder="Correo electrónico"
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black placeholder-opacity-100"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
 
-          <input
-            type="password"
-            placeholder="Contraseña"
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black placeholder-opacity-100"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+            <input
+              type="email"
+              placeholder="Correo electrónico"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black placeholder-opacity-100"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <input
+              type="password"
+              placeholder="Contraseña"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black placeholder-opacity-100"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
             <div className="flex flex-col gap-3">
               <button
