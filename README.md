@@ -35,18 +35,23 @@ export default function Home() {
   const handleSignUp = async () => {
     try {
       const credenciales = await createUserWithEmailAndPassword(auth, email, password);
-
+  
       await addDoc(collection(db, "usuarios"), {
-        email: email,
+        email: credenciales.user.email,
       });
-
+  
       await sendEmailVerification(credenciales.user);
-
+  
       alert("¡Cuenta creada! Revisa tu correo y verifica tu cuenta.");
     } catch (error: any) {
-      alert("Error al crear cuenta: " + error.message);
+      if (error.code === "auth/email-already-in-use") {
+        alert("Ese correo ya está registrado. Intenta iniciar sesión.");
+      } else {
+        alert("Error al crear cuenta: " + error.message);
+      }
     }
   };
+  
 
   const handleLogin = async () => {
     try {
