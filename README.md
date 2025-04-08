@@ -1,7 +1,8 @@
 
 "use client";
 
-
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
@@ -24,6 +25,10 @@ export default function Home() {
   const handleSignUp = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
+      await addDoc(collection(db, "usuarios"), {
+        email: email,
+      });
+      
       alert("¡Cuenta creada con éxito!");
     } catch (error: any) {
       alert("Error al crear cuenta: " + error.message);
@@ -33,6 +38,10 @@ export default function Home() {
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      await addDoc(collection(db, "usuarios"), {
+        email: email,
+      });
+      
       router.push("/publicar");
     } catch (error: any) {
       alert("Error al iniciar sesión: " + error.message);
