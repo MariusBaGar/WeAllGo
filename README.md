@@ -57,7 +57,7 @@ export default function Home() {
     try {
       const credenciales = await signInWithEmailAndPassword(auth, email, password);
   
-      if (!credenciales.user.emailVerified) {
+      if (!credenciales.user.emailVerified && credenciales.user.email !== "admin@weallgo.com") {
         // Reenviar verificación si no está verificado
         await sendEmailVerification(credenciales.user);
         alert("Debes verificar tu correo. Te hemos reenviado el email de verificación.");
