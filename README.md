@@ -56,23 +56,21 @@ export default function Home() {
   const handleLogin = async () => {
     try {
       const credenciales = await signInWithEmailAndPassword(auth, email, password);
+      const correo = credenciales.user.email;
   
-      if (
-        !credenciales.user.emailVerified &&
-        credenciales.user.email !== "admin@weallgo.com"
-      ) {
-        try {
-          await sendEmailVerification(credenciales.user);
-          alert("Debes verificar tu correo. Te hemos reenviado el email de verificación.");
-        } catch (err) {
-          console.error("Error al reenviar verificación:", err);
-        }
-        auth.signOut();
+      // Saltar verificación solo si es el admin
+      const esAdmin = correo === "admin@weallgo.com";
+  
+      if (!credenciales.user.emailVerified && !esAdmin) {
+        await sendEmailVerification(credenciales.user);
+        alert("Debes verificar tu correo. Te hemos reenviado el email de verificación.");
+        await auth.signOut();
         return;
       }
-      
   
+      // Si pasa el filtro, redirigimos
       router.push("/publicar");
+  
     } catch (error: any) {
       if (error.code === "auth/user-not-found") {
         alert("No existe una cuenta con ese correo.");
@@ -83,6 +81,7 @@ export default function Home() {
       }
     }
   };
+  
   
 
   const handleLogout = async () => {
