@@ -57,13 +57,20 @@ export default function Home() {
     try {
       const credenciales = await signInWithEmailAndPassword(auth, email, password);
   
-      if (!credenciales.user.emailVerified && credenciales.user.email !== "admin@weallgo.com") {
-        // Reenviar verificación si no está verificado
-        await sendEmailVerification(credenciales.user);
-        alert("Debes verificar tu correo. Te hemos reenviado el email de verificación.");
+      if (
+        !credenciales.user.emailVerified &&
+        credenciales.user.email !== "admin@weallgo.com"
+      ) {
+        try {
+          await sendEmailVerification(credenciales.user);
+          alert("Debes verificar tu correo. Te hemos reenviado el email de verificación.");
+        } catch (err) {
+          console.error("Error al reenviar verificación:", err);
+        }
         auth.signOut();
         return;
       }
+      
   
       router.push("/publicar");
     } catch (error: any) {
