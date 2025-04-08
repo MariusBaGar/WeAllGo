@@ -21,7 +21,10 @@ export default function Home() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
-        if (!currentUser.emailVerified) {
+        const correo = currentUser.email;
+        const esAdmin = correo === "admin@weallgo.com";
+  
+        if (!currentUser.emailVerified && !esAdmin) {
           alert("Verifica tu correo electrónico antes de continuar.");
           auth.signOut();
         } else {
@@ -29,8 +32,10 @@ export default function Home() {
         }
       }
     });
+  
     return () => unsubscribe();
   }, []);
+  
 
   const handleSignUp = async () => {
     try {
