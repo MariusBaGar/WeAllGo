@@ -23,18 +23,19 @@ export default function Home() {
       if (currentUser) {
         const correo = currentUser.email;
         const esAdmin = correo === "admin@weallgo.com";
-
+  
         if (!currentUser.emailVerified && !esAdmin) {
           alert("Verifica tu correo electrónico antes de continuar.");
           auth.signOut();
         } else {
-          setUser(currentUser);
+          setUser(currentUser); // 👈 Esto es lo que mantiene al usuario logueado
         }
       }
     });
-
+  
     return () => unsubscribe();
   }, []);
+  
 
   const handleSignUp = async () => {
     try {
