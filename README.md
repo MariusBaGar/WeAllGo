@@ -11,7 +11,6 @@ import {
 import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
-import Link from "next/link"; // 👈 Asegúrate de importar esto
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -89,94 +88,64 @@ export default function Home() {
   };
 
   return (
-    <>
-      {/* ✅ MENÚ */}
-      <div className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
-        <h1 className="text-purple-600 font-bold text-xl">WeAllGo</h1>
-        {user && (
-          <div className="space-x-4 text-sm">
-            <Link href="/publicar" className="text-purple-700 hover:underline">
-              Publicar
-            </Link>
-            <Link href="/viajes" className="text-purple-700 hover:underline">
-              Ver viajes
-            </Link>
-            <Link href="/usuarios" className="text-purple-700 hover:underline">
-              Usuarios
-            </Link>
-            <Link href="/facturacion" className="text-purple-700 hover:underline">
-              Facturación
-            </Link>
+    <motion.div
+      className="flex items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 p-4 min-h-[calc(100vh-4rem)] pt-20"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8 space-y-6">
+        {!user ? (
+          <>
+            <h1 className="text-3xl font-bold text-center text-purple-700">
+              Bienvenido a WeAllGo
+            </h1>
+
+            <input
+              type="email"
+              placeholder="Correo electrónico"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black placeholder-opacity-100"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <input
+              type="password"
+              placeholder="Contraseña"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black placeholder-opacity-100"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <div className="flex flex-col gap-3">
+              <button
+                className="bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition"
+                onClick={handleLogin}
+              >
+                Iniciar sesión
+              </button>
+              <button
+                className="bg-white border border-purple-600 text-purple-600 py-3 rounded-xl hover:bg-purple-50 transition"
+                onClick={handleSignUp}
+              >
+                Crear cuenta
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2 className="text-2xl font-semibold text-center text-purple-600">
+              ¡Hola, {user.email}!
+            </h2>
+            <p className="text-center text-gray-500">Estás logueado con éxito.</p>
             <button
+              className="bg-red-500 text-white py-3 w-full rounded-xl hover:bg-red-600 transition"
               onClick={handleLogout}
-              className="text-red-600 hover:underline font-medium"
             >
               Cerrar sesión
             </button>
-          </div>
+          </>
         )}
       </div>
-
-      {/* FORMULARIO */}
-      <motion.div
-        className="flex items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 p-4 min-h-[calc(100vh-4rem)] pt-20"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-      >
-        <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8 space-y-6">
-          {!user ? (
-            <>
-              <h1 className="text-3xl font-bold text-center text-purple-700">
-                Bienvenido a WeAllGo
-              </h1>
-
-              <input
-                type="email"
-                placeholder="Correo electrónico"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black placeholder-opacity-100"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-
-              <input
-                type="password"
-                placeholder="Contraseña"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black placeholder-black placeholder-opacity-100"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-
-              <div className="flex flex-col gap-3">
-                <button
-                  className="bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition"
-                  onClick={handleLogin}
-                >
-                  Iniciar sesión
-                </button>
-                <button
-                  className="bg-white border border-purple-600 text-purple-600 py-3 rounded-xl hover:bg-purple-50 transition"
-                  onClick={handleSignUp}
-                >
-                  Crear cuenta
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <h2 className="text-2xl font-semibold text-center text-purple-600">
-                ¡Hola, {user.email}!
-              </h2>
-              <p className="text-center text-gray-500">Estás logueado con éxito.</p>
-              <button
-                className="bg-red-500 text-white py-3 w-full rounded-xl hover:bg-red-600 transition"
-                onClick={handleLogout}
-              >
-                Cerrar sesión
-              </button>
-            </>
-          )}
-        </div>
-      </motion.div>
-    </>
+    </motion.div>
   );
 }
