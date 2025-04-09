@@ -124,7 +124,7 @@ export default function Home() {
                 Iniciar sesión
               </button>
               <button
-                className="bg-white border border-purple-600 text-purple-600 py-3 rounded-xl hover:bg-purple-50 transition"
+                className="bg-white border border-purple-600 text-blue-600 py-3 rounded-xl hover:bg-purple-50 transition"
                 onClick={handleSignUp}
               >
                 Crear cuenta
@@ -133,7 +133,7 @@ export default function Home() {
           </>
         ) : (
           <>
-            <h2 className="text-2xl font-semibold text-center text-purple-600">
+            <h2 className="text-2xl font-semibold text-center text-blue-600">
               ¡Hola, {user.email}!
             </h2>
             <p className="text-center text-gray-500">Estás logueado con éxito.</p>
